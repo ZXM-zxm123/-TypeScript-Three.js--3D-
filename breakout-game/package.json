@@ -1,0 +1,21 @@
+{
+  "name": "breakout-game",
+  "version": "1.0.0",
+  "description": "3D Breakout game with Three.js, WebAssembly physics, and Node.js backend",
+  "scripts": {
+    "build:wasm": "cd cpp && emcc physics.cpp -o ../wasm/physics.js -s WASM=1 -s EXPORTED_FUNCTIONS='[_malloc, _free, _initPhysics, _updateBallPaddleCollision, _updateBallBrickCollision, _getBallVelocityX, _getBallVelocityY, _getBallVelocityZ, _setBallPosition, _getBallPositionX, _getBallPositionY, _getBallPositionZ, _applyPaddleForce, _applyBrickDestruction]' -s EXPORTED_RUNTIME_METHODS='[ccall, cwrap]' -s MODULARIZE=1 -s EXPORT_NAME=PhysicsModule",
+    "build:frontend": "cd src && tsc && cp index.html ../public/",
+    "start:server": "cd server && node index.js",
+    "dev": "npm run build:wasm && npm run build:frontend && npm run start:server"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "three": "^0.160.0",
+    "@types/three": "^0.160.0"
+  }
+}

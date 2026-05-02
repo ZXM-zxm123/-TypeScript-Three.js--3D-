@@ -1,0 +1,65 @@
+{
+  "levels": [
+    {
+      "id": 1,
+      "name": "Classic",
+      "theme": "default",
+      "bricks": [
+        { "row": 0, "col": 0, "color": "#ff0000" }, { "row": 0, "col": 1, "color": "#ff0000" }, { "row": 0, "col": 2, "color": "#ff0000" }, { "row": 0, "col": 3, "color": "#ff0000" }, { "row": 0, "col": 4, "color": "#ff0000" }, { "row": 0, "col": 5, "color": "#ff0000" }, { "row": 0, "col": 6, "color": "#ff0000" }, { "row": 0, "col": 7, "color": "#ff0000" },
+        { "row": 1, "col": 0, "color": "#ff8800" }, { "row": 1, "col": 1, "color": "#ff8800" }, { "row": 1, "col": 2, "color": "#ff8800" }, { "row": 1, "col": 3, "color": "#ff8800" }, { "row": 1, "col": 4, "color": "#ff8800" }, { "row": 1, "col": 5, "color": "#ff8800" }, { "row": 1, "col": 6, "color": "#ff8800" }, { "row": 1, "col": 7, "color": "#ff8800" },
+        { "row": 2, "col": 0, "color": "#ffff00" }, { "row": 2, "col": 1, "color": "#ffff00" }, { "row": 2, "col": 2, "color": "#ffff00" }, { "row": 2, "col": 3, "color": "#ffff00" }, { "row": 2, "col": 4, "color": "#ffff00" }, { "row": 2, "col": 5, "color": "#ffff00" }, { "row": 2, "col": 6, "color": "#ffff00" }, { "row": 2, "col": 7, "color": "#ffff00" },
+        { "row": 3, "col": 0, "color": "#00ff00" }, { "row": 3, "col": 1, "color": "#00ff00" }, { "row": 3, "col": 2, "color": "#00ff00" }, { "row": 3, "col": 3, "color": "#00ff00" }, { "row": 3, "col": 4, "color": "#00ff00" }, { "row": 3, "col": 5, "color": "#00ff00" }, { "row": 3, "col": 6, "color": "#00ff00" }, { "row": 3, "col": 7, "color": "#00ff00" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Pyramid",
+      "theme": "neon",
+      "bricks": [
+        { "row": 0, "col": 3, "color": "#ff00ff" }, { "row": 0, "col": 4, "color": "#ff00ff" },
+        { "row": 1, "col": 2, "color": "#00ffff" }, { "row": 1, "col": 3, "color": "#00ffff" }, { "row": 1, "col": 4, "color": "#00ffff" }, { "row": 1, "col": 5, "color": "#00ffff" },
+        { "row": 2, "col": 1, "color": "#ffff00" }, { "row": 2, "col": 2, "color": "#ffff00" }, { "row": 2, "col": 3, "color": "#ffff00" }, { "row": 2, "col": 4, "color": "#ffff00" }, { "row": 2, "col": 5, "color": "#ffff00" }, { "row": 2, "col": 6, "color": "#ffff00" },
+        { "row": 3, "col": 0, "color": "#ff8800" }, { "row": 3, "col": 1, "color": "#ff8800" }, { "row": 3, "col": 2, "color": "#ff8800" }, { "row": 3, "col": 3, "color": "#ff8800" }, { "row": 3, "col": 4, "color": "#ff8800" }, { "row": 3, "col": 5, "color": "#ff8800" }, { "row": 3, "col": 6, "color": "#ff8800" }, { "row": 3, "col": 7, "color": "#ff8800" },
+        { "row": 4, "col": 0, "color": "#ff0000" }, { "row": 4, "col": 1, "color": "#ff0000" }, { "row": 4, "col": 2, "color": "#ff0000" }, { "row": 4, "col": 3, "color": "#ff0000" }, { "row": 4, "col": 4, "color": "#ff0000" }, { "row": 4, "col": 5, "color": "#ff0000" }, { "row": 4, "col": 6, "color": "#ff0000" }, { "row": 4, "col": 7, "color": "#ff0000" }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Checkerboard",
+      "theme": "cyberpunk",
+      "bricks": [
+        { "row": 0, "col": 0, "color": "#ff0000" }, { "row": 0, "col": 2, "color": "#ff0000" }, { "row": 0, "col": 4, "color": "#ff0000" }, { "row": 0, "col": 6, "color": "#ff0000" },
+        { "row": 1, "col": 1, "color": "#00ff00" }, { "row": 1, "col": 3, "color": "#00ff00" }, { "row": 1, "col": 5, "color": "#00ff00" }, { "row": 1, "col": 7, "color": "#00ff00" },
+        { "row": 2, "col": 0, "color": "#0000ff" }, { "row": 2, "col": 2, "color": "#0000ff" }, { "row": 2, "col": 4, "color": "#0000ff" }, { "row": 2, "col": 6, "color": "#0000ff" },
+        { "row": 3, "col": 1, "color": "#ffff00" }, { "row": 3, "col": 3, "color": "#ffff00" }, { "row": 3, "col": 5, "color": "#ffff00" }, { "row": 3, "col": 7, "color": "#ffff00" },
+        { "row": 4, "col": 0, "color": "#ff00ff" }, { "row": 4, "col": 2, "color": "#ff00ff" }, { "row": 4, "col": 4, "color": "#ff00ff" }, { "row": 4, "col": 6, "color": "#ff00ff" },
+        { "row": 5, "col": 1, "color": "#00ffff" }, { "row": 5, "col": 3, "color": "#00ffff" }, { "row": 5, "col": 5, "color": "#00ffff" }, { "row": 5, "col": 7, "color": "#00ffff" }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Fortress",
+      "theme": "retro",
+      "bricks": [
+        { "row": 0, "col": 0, "color": "#884400" }, { "row": 0, "col": 1, "color": "#884400" }, { "row": 0, "col": 2, "color": "#884400" }, { "row": 0, "col": 3, "color": "#884400" }, { "row": 0, "col": 4, "color": "#884400" }, { "row": 0, "col": 5, "color": "#884400" }, { "row": 0, "col": 6, "color": "#884400" }, { "row": 0, "col": 7, "color": "#884400" },
+        { "row": 1, "col": 0, "color": "#884400" }, { "row": 1, "col": 7, "color": "#884400" },
+        { "row": 2, "col": 0, "color": "#884400" }, { "row": 2, "col": 3, "color": "#884400" }, { "row": 2, "col": 4, "color": "#884400" }, { "row": 2, "col": 7, "color": "#884400" },
+        { "row": 3, "col": 0, "color": "#884400" }, { "row": 3, "col": 7, "color": "#884400" },
+        { "row": 4, "col": 0, "color": "#884400" }, { "row": 4, "col": 1, "color": "#884400" }, { "row": 4, "col": 2, "color": "#884400" }, { "row": 4, "col": 3, "color": "#884400" }, { "row": 4, "col": 4, "color": "#884400" }, { "row": 4, "col": 5, "color": "#884400" }, { "row": 4, "col": 6, "color": "#884400" }, { "row": 4, "col": 7, "color": "#884400" }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Invaders",
+      "theme": "space",
+      "bricks": [
+        { "row": 0, "col": 1, "color": "#ff0000" }, { "row": 0, "col": 2, "color": "#ff0000" }, { "row": 0, "col": 5, "color": "#ff0000" }, { "row": 0, "col": 6, "color": "#ff0000" },
+        { "row": 1, "col": 0, "color": "#ff0000" }, { "row": 1, "col": 1, "color": "#ff0000" }, { "row": 1, "col": 2, "color": "#ff0000" }, { "row": 1, "col": 3, "color": "#ff0000" }, { "row": 1, "col": 4, "color": "#ff0000" }, { "row": 1, "col": 5, "color": "#ff0000" }, { "row": 1, "col": 6, "color": "#ff0000" }, { "row": 1, "col": 7, "color": "#ff0000" },
+        { "row": 2, "col": 0, "color": "#ffff00" }, { "row": 2, "col": 3, "color": "#ffff00" }, { "row": 2, "col": 4, "color": "#ffff00" }, { "row": 2, "col": 7, "color": "#ffff00" },
+        { "row": 3, "col": 0, "color": "#ffff00" }, { "row": 3, "col": 2, "color": "#ffff00" }, { "row": 3, "col": 5, "color": "#ffff00" }, { "row": 3, "col": 7, "color": "#ffff00" },
+        { "row": 4, "col": 0, "color": "#00ff00" }, { "row": 4, "col": 1, "color": "#00ff00" }, { "row": 4, "col": 2, "color": "#00ff00" }, { "row": 4, "col": 3, "color": "#00ff00" }, { "row": 4, "col": 4, "color": "#00ff00" }, { "row": 4, "col": 5, "color": "#00ff00" }, { "row": 4, "col": 6, "color": "#00ff00" }, { "row": 4, "col": 7, "color": "#00ff00" },
+        { "row": 5, "col": 1, "color": "#00ff00" }, { "row": 5, "col": 3, "color": "#00ff00" }, { "row": 5, "col": 4, "color": "#00ff00" }, { "row": 5, "col": 6, "color": "#00ff00" }
+      ]
+    }
+  ]
+}

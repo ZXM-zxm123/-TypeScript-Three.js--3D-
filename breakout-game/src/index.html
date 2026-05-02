@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Breakout Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px black;
+            pointer-events: none;
+            z-index: 100;
+        }
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            font-size: 12px;
+            text-shadow: 1px 1px 2px black;
+            pointer-events: none;
+        }
+        #level-select {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 200;
+        }
+        #level-select h2 {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        #level-select button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #level-select button:hover {
+            background: #555;
+        }
+        #theme-select {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+        }
+        #theme-select select {
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            cursor: pointer;
+        }
+        #level-editor {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 300;
+            display: none;
+        }
+        #level-editor input, #level-editor select {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+        #level-editor button {
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        #level-editor .save-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        #level-editor .cancel-btn {
+            background: #f44336;
+            color: white;
+        }
+        .brick-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .brick-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .brick-color.selected {
+            border-color: white;
+        }
+        .brick-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .brick-cell {
+            width: 40px;
+            height: 20px;
+            background: #333;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .brick-cell.filled {
+            border: 2px solid white;
+        }
+        #editor-toggle {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        #editor-toggle:hover {
+            background: rgba(50, 50, 50, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div id="ui"></div>
+    <div id="controls">
+        Arrow Keys / A,D: Move Paddle | Space: Launch Ball | ESC: Pause
+    </div>
+    <div id="theme-select">
+        <select id="theme" onchange="changeTheme(this.value)">
+            <option value="default">Default</option>
+            <option value="neon">Neon</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="retro">Retro</option>
+            <option value="space">Space</option>
+        </select>
+    </div>
+    <button id="editor-toggle" onclick="toggleLevelEditor()">Level Editor</button>
+
+    <div id="level-select">
+        <h2>Select Level</h2>
+        <div id="level-list"></div>
+    </div>
+
+    <div id="level-editor">
+        <h2>Level Editor</h2>
+        <input type="text" id="level-name" placeholder="Level Name">
+        <div class="brick-palette" id="brick-palette"></div>
+        <div class="brick-grid" id="brick-grid"></div>
+        <button class="save-btn" onclick="saveCustomLevel()">Save Level</button>
+        <button class="cancel-btn" onclick="closeLevelEditor()">Cancel</button>
+    </div>
+
+    <script type="module" src="game.js"></script>
+    <script>
+        const colors = ['#ff0000', '#ff8800', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ffffff'];
+
+        function changeTheme(theme) {
+            if (window.gameInstance) {
+                window.gameInstance.applyTheme(theme);
+            }
+        }
+
+        function toggleLevelEditor() {
+            const editor = document.getElementById('level-editor');
+            editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
+            if (editor.style.display === 'block') {
+                initLevelEditor();
+            }
+        }
+
+        function closeLevelEditor() {
+            document.getElementById('level-editor').style.display = 'none';
+        }
+
+        function initLevelEditor() {
+            const palette = document.getElementById('brick-palette');
+            palette.innerHTML = '';
+            colors.forEach((color, i) => {
+                const div = document.createElement('div');
+                div.className = 'brick-color' + (i === 0 ? ' selected' : '');
+                div.style.background = color;
+                div.dataset.color = color;
+                div.onclick = () => {
+                    document.querySelectorAll('.brick-color').forEach(c => c.classList.remove('selected'));
+                    div.classList.add('selected');
+                };
+                palette.appendChild(div);
+            });
+
+            const grid = document.getElementById('brick-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 32; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'brick-cell';
+                cell.dataset.index = i;
+                cell.dataset.row = Math.floor(i / 8);
+                cell.dataset.col = i % 8;
+                cell.onclick = () => {
+                    const selectedColor = document.querySelector('.brick-color.selected').getAttribute('data-color');
+                    if (cell.classList.contains('filled')) {
+                        cell.classList.remove('filled');
+                        cell.style.background = '#333';
+                    } else {
+                        cell.classList.add('filled');
+                        cell.style.background = selectedColor;
+                    }
+                };
+                grid.appendChild(cell);
+            }
+        }
+
+        function saveCustomLevel() {
+            const name = document.getElementById('level-name').value || 'Custom Level';
+            const bricks = [];
+            document.querySelectorAll('.brick-cell.filled').forEach(cell => {
+                const color = cell.style.background;
+                const rgb = hexToRgb(color);
+                const hexColor = rgbToHex(rgb.r, rgb.g, rgb.b);
+                bricks.push({
+                    row: parseInt(cell.dataset.row),
+                    col: parseInt(cell.dataset.col),
+                    color: hexColor
+                });
+            });
+
+            fetch('/api/levels/user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, bricks })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert('Level saved!');
+                closeLevelEditor();
+                loadLevels();
+            })
+            .catch(err => console.error('Error saving level:', err));
+        }
+
+        function loadLevels() {
+            fetch('/api/levels')
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('level-list');
+                    list.innerHTML = '';
+                    [...data.preset, ...data.userCreated].forEach(level => {
+                        const btn = document.createElement('button');
+                        btn.textContent = `${level.id}. ${level.name}`;
+                        btn.onclick = () => startLevel(level.id);
+                        list.appendChild(btn);
+                    });
+                });
+        }
+
+        function startLevel(id) {
+            document.getElementById('level-select').style.display = 'none';
+            if (window.gameInstance) {
+                window.gameInstance.loadLevel(id);
+                window.gameInstance.startGame();
+            }
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadLevels);
+    </script>
+</body>
+</html>
