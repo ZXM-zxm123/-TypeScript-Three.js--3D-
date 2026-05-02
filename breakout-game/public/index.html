@@ -39,12 +39,19 @@
         #start-screen button:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
         #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px; }
         .hidden { display: none !important; }
+        .level-author { font-size: 12px; color: #aaa; display: block; }
+        #user-profile { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); color: white; background: rgba(0,0,0,0.7); padding: 8px 16px; border-radius: 8px; z-index: 100; }
+        #user-profile input { padding: 4px; border-radius: 4px; border: none; margin-left: 8px; }
     </style>
 </head>
 <body>
     <div id="loading">Loading 3D Breakout...</div>
     <div id="ui"></div>
     <div id="controls">Arrow Keys / A,D: Move | Space: Launch Ball | ESC: Pause</div>
+    <div id="user-profile">
+        <span>Player:</span>
+        <input type="text" id="user-name" placeholder="Your name">
+    </div>
     <div id="theme-select">
         <select id="theme" onchange="changeTheme(this.value)">
             <option value="default">Default Theme</option>
@@ -89,6 +96,27 @@
     <script>
         var gameInstance = null;
         const colors = ['#ff0000', '#ff8800', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ffffff'];
+        
+        // 生成或获取用户 ID
+        function getUserId() {
+            let userId = localStorage.getItem('breakoutUserId');
+            if (!userId) {
+                userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('breakoutUserId', userId);
+            }
+            return userId;
+        }
+        
+        // 获取或设置用户名
+        function getUserName() {
+            const userName = localStorage.getItem('breakoutUserName') || 'Anonymous';
+            document.getElementById('user-name').value = userName;
+            return userName;
+        }
+        
+        function setUserName(name) {
+            localStorage.setItem('breakoutUserName', name);
+        }
 
         function changeTheme(theme) {
             if (window.gameInstance) {
@@ -159,7 +187,7 @@
             }
         }
 
-        function saveCustomLevel() {
+        function saveCustomLevel(overwrite = false) {
             const name = document.getElementById('level-name').value || 'Custom Level';
             const bricks = [];
             document.querySelectorAll('.brick-cell.filled').forEach(cell => {
@@ -173,13 +201,26 @@
                 });
             });
 
+            const userId = getUserId();
+            const userName = getUserName();
+
             fetch('/api/levels/user', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, bricks })
+                body: JSON.stringify({ name, bricks, userId, userName, overwrite })
             })
-            .then(res => res.json())
-            .then(data => {
+            .then(async res => {
+                const data = await res.json();
+                if (res.status === 403) {
+                    alert(data.error + '\nCreator: ' + data.existingAuthor);
+                    return;
+                }
+                if (res.status === 409) {
+                    if (confirm(data.error + '\nClick OK to overwrite.')) {
+                        saveCustomLevel(true);
+                    }
+                    return;
+                }
                 alert('Level saved!');
                 closeLevelEditor();
                 loadLevels();
@@ -195,7 +236,7 @@
                     list.innerHTML = '';
                     data.preset.forEach(level => {
                         const btn = document.createElement('button');
-                        btn.textContent = `${level.name}`;
+                        btn.innerHTML = `${level.name}<span class="level-author">by System</span>`;
                         btn.onclick = () => startLevel(level.id);
                         list.appendChild(btn);
                     });
@@ -206,7 +247,8 @@
                         list.appendChild(divider);
                         data.userCreated.forEach(level => {
                             const btn = document.createElement('button');
-                            btn.textContent = `${level.name} (Custom)`;
+                            const author = level.userName || 'Anonymous';
+                            btn.innerHTML = `${level.name}<span class="level-author">by ${author}</span>`;
                             btn.onclick = () => startLevel(level.id);
                             list.appendChild(btn);
                         });
@@ -237,6 +279,11 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('loading').style.display = 'none';
+            // 初始化用户名
+            getUserName();
+            document.getElementById('user-name').addEventListener('change', (e) => {
+                setUserName(e.target.value || 'Anonymous');
+            });
         });
     </script>
 </body>
