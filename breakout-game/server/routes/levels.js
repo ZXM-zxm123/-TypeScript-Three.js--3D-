@@ -51,11 +51,50 @@ router.get('/:id', (req, res) => {
 
 router.post('/user', (req, res) => {
   const userLevels = loadUserLevels();
+  const { name, bricks, theme, userId, userName, overwrite } = req.body;
+  
+  const levelName = name || `Custom Level ${userLevels.levels.length + 1}`;
+  
+  // 查找同名关卡
+  const existingLevel = userLevels.levels.find(level => level.name === levelName);
+  
+  if (existingLevel) {
+    if (existingLevel.userId !== userId) {
+      // 他人的同名关卡，拒绝覆盖
+      return res.status(403).json({
+        error: 'A level with this name already exists and belongs to another user. Please choose a different name.',
+        existingAuthor: existingLevel.userName
+      });
+    }
+    
+    if (!overwrite) {
+      // 自己的同名关卡，需确认覆盖
+      return res.status(409).json({
+        error: 'You already have a level with this name. Confirm overwrite?',
+        existingLevel
+      });
+    }
+    
+    // 覆盖自己的关卡
+    const index = userLevels.levels.findIndex(l => l.id === existingLevel.id);
+    userLevels.levels[index] = {
+      ...existingLevel,
+      bricks,
+      theme: theme || 'default',
+      updatedAt: new Date().toISOString()
+    };
+    saveUserLevels(userLevels);
+    return res.json(userLevels.levels[index]);
+  }
+  
+  // 创建新关卡
   const newLevel = {
     id: Date.now(),
-    name: req.body.name || `Custom Level ${userLevels.levels.length + 1}`,
-    bricks: req.body.bricks,
-    theme: req.body.theme || 'default',
+    name: levelName,
+    bricks,
+    theme: theme || 'default',
+    userId,
+    userName,
     createdAt: new Date().toISOString()
   };
   
@@ -65,14 +104,21 @@ router.post('/user', (req, res) => {
 });
 
 router.delete('/user/:id', (req, res) => {
+  const { userId } = req.query;
   const userLevels = loadUserLevels();
   const initialLength = userLevels.levels.length;
-  userLevels.levels = userLevels.levels.filter(l => l.id !== parseInt(req.params.id));
   
-  if (userLevels.levels.length === initialLength) {
+  // 检查是否是自己的关卡
+  const levelIndex = userLevels.levels.findIndex(l => l.id === parseInt(req.params.id));
+  if (levelIndex === -1) {
     return res.status(404).json({ error: 'Level not found' });
   }
   
+  if (userLevels.levels[levelIndex].userId !== userId) {
+    return res.status(403).json({ error: 'You can only delete your own levels' });
+  }
+  
+  userLevels.levels.splice(levelIndex, 1);
   saveUserLevels(userLevels);
   res.json({ message: 'Level deleted successfully' });
 });
