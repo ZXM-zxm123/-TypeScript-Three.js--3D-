@@ -42,6 +42,11 @@
         .level-author { font-size: 12px; color: #aaa; display: block; }
         #user-profile { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); color: white; background: rgba(0,0,0,0.7); padding: 8px 16px; border-radius: 8px; z-index: 100; }
         #user-profile input { padding: 4px; border-radius: 4px; border: none; margin-left: 8px; }
+        .level-item { display: flex; align-items: center; gap: 8px; margin: 5px 0; }
+        .level-btn { flex: 1; text-align: left; padding: 10px 12px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .level-btn:hover { background: #555; }
+        .delete-btn { padding: 10px 14px; background: #883333; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .delete-btn:hover { background: #aa4444; }
     </style>
 </head>
 <body>
@@ -235,10 +240,14 @@
                     const list = document.getElementById('level-list');
                     list.innerHTML = '';
                     data.preset.forEach(level => {
+                        const item = document.createElement('div');
+                        item.className = 'level-item';
                         const btn = document.createElement('button');
+                        btn.className = 'level-btn';
                         btn.innerHTML = `${level.name}<span class="level-author">by System</span>`;
                         btn.onclick = () => startLevel(level.id);
-                        list.appendChild(btn);
+                        item.appendChild(btn);
+                        list.appendChild(item);
                     });
                     if (data.userCreated.length > 0) {
                         const divider = document.createElement('div');
@@ -246,15 +255,57 @@
                         divider.style.borderBottom = '1px solid #555';
                         list.appendChild(divider);
                         data.userCreated.forEach(level => {
+                            const item = document.createElement('div');
+                            item.className = 'level-item';
                             const btn = document.createElement('button');
+                            btn.className = 'level-btn';
                             const author = level.userName || 'Anonymous';
                             btn.innerHTML = `${level.name}<span class="level-author">by ${author}</span>`;
                             btn.onclick = () => startLevel(level.id);
-                            list.appendChild(btn);
+                            item.appendChild(btn);
+
+                            const currentUserId = getUserId();
+                            if (level.userId === currentUserId) {
+                                const deleteBtn = document.createElement('button');
+                                deleteBtn.className = 'delete-btn';
+                                deleteBtn.textContent = 'Delete';
+                                deleteBtn.onclick = (e) => {
+                                    e.stopPropagation();
+                                    deleteLevel(level.id);
+                                };
+                                item.appendChild(deleteBtn);
+                            }
+                            
+                            list.appendChild(item);
                         });
                     }
                 })
                 .catch(err => console.error('Error loading levels:', err));
+        }
+
+        function deleteLevel(levelId) {
+            if (!confirm('Are you sure you want to delete this level? This cannot be undone.')) {
+                return;
+            }
+            
+            const userId = getUserId();
+            fetch(`/api/levels/user/${levelId}?userId=${userId}`, {
+                method: 'DELETE'
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert('Level deleted successfully!');
+                    loadLevels();
+                } else {
+                    res.json().then(data => {
+                        alert(data.error || 'Failed to delete level');
+                    });
+                }
+            })
+            .catch(err => {
+                console.error('Error deleting level:', err);
+                alert('Failed to delete level');
+            });
         }
 
         function startLevel(id) {
